@@ -1,10 +1,8 @@
 import BudgetForm from "./components/BudgetForm.tsx";
-import {useContext} from "react";
-import {BudgetContext} from "./context/BudgetContext.tsx";
+import {useBudget} from "./hooks/useBudget.ts";
 
 function App() {
-    const context = useContext(BudgetContext);
-    console.log(context)
+    const {state, dispatch} = useBudget();
     return (
         <>
             <header className="bg-blue-600 py-8 max-h-72">

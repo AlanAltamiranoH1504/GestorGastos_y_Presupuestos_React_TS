@@ -1,21 +1,20 @@
 import {useForm} from "react-hook-form";
-// import {useState} from "react";
 import {toast} from "react-toastify";
 import type {PresupuestoInicial} from "../types";
+import {useBudget} from "../hooks/useBudget.ts";
 
 const BudgetForm = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<PresupuestoInicial>();
-    // const [budget, setBudget] = useState(0);
+    const {dispatch} = useBudget();
 
     //Funcion de definicion de state
     function setInformacion(data: PresupuestoInicial) {
-        toast.success("Presupuesto asignado correctamente");
-        console.log(data)
-        // setBudget(+data.budget)
+        toast.success("Presupuesto asignado correctamente.");
+        dispatch({"type": "addBugget", payload: {budget: data.budget}})
     }
 
     function mostrarErrores() {
-        toast.error("Error en asignacion de presupuesto");
+        toast.error("Error en asignacion de presupuesto.");
     }
     return (
         <>
@@ -23,13 +22,12 @@ const BudgetForm = () => {
                 onSubmit={handleSubmit(setInformacion, mostrarErrores)}
                 className="space-y-5">
                 <div className="flex flex-col space-y-5">
-                    <label htmlFor="budget" className="text-4xl text-blue-600 font-bold text-center">Definir
-                        Presupuesto</label>
+                    <label htmlFor="budget" className="text-4xl text-blue-600 font-bold text-center">Definir Presupuesto</label>
                     <input
                         type="number"
                         className="border p-3 rounded-lg border-gray-200 shadow-md"
                         id="budget"
-                        placeholder="Define el presupuesto inicial"
+                        placeholder="Define tu presupuesto inicial"
                         {...register("budget",{
                             required: "El presupuesto inicial es obligatorio",
                             pattern: {

@@ -1,29 +1,25 @@
-import {useState, createContext, useReducer} from "react";
+import {useReducer, createContext, type Dispatch} from "react";
 import {type BudgetActions, budgetReducer, type BudgetState, initialState} from "../reducers/budgetReducer.ts";
 import * as React from "react";
 
 type BudgetContextProps = {
-    state: BudgetState
-    dispatch: React.Dispatch<BudgetActions>
+    state: BudgetState,
+    dispatch:  Dispatch<BudgetActions>
 }
 type BudgetProviderProps = {
     children: React.ReactNode
 }
-
-//Definicion de context
+// eslint-disable-next-line react-refresh/only-export-components
 export const BudgetContext = createContext<BudgetContextProps>(null!);
 
-const BudgetProvider = ({children}: BudgetProviderProps) => {
+export const BudgetProvider = ({children}: BudgetProviderProps) => {
     const [state, dispatch] = useReducer(budgetReducer, initialState);
+
     return (
         <BudgetContext.Provider
-            value={{
-                state,
-                dispatch
-            }}
+            value={{state, dispatch}}
         >
             {children}
         </BudgetContext.Provider>
     );
 }
-export default BudgetProvider;

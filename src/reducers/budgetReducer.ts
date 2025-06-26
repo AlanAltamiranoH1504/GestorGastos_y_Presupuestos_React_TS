@@ -17,7 +17,7 @@ export const budgetReducer = (
         console.log("Agregando budget");
         return {
             ...state,
-            budget: actions.payload.budget
+            budget: +actions.payload.budget
         }
     }
     return state;
