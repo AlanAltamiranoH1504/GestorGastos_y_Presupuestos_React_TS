@@ -1,10 +1,13 @@
 import {Fragment} from "react";
 import CantidadesDisplay from "./CantidadesDisplay.tsx";
 import {useBudget} from "../hooks/useBudget.ts";
-import GastoModal from "./GastoModal.tsx";
 
 const BudgetTracker = () => {
     const {state, dispatch} = useBudget();
+    const cantidadGastada = state.gastos.reduce((acumulado, gasto) =>{
+        return acumulado = acumulado + gasto.monto
+    }, 0);
+    const cantidadDisponible = state.budget - cantidadGastada;
 
     return (
         <Fragment>
@@ -27,11 +30,11 @@ const BudgetTracker = () => {
                     />
                     <CantidadesDisplay
                         label="Disponible"
-                        cantidad={200}
+                        cantidad={cantidadDisponible}
                     />
                     <CantidadesDisplay
                         label="Gastado"
-                        cantidad={100}
+                        cantidad={cantidadGastada}
                     />
                 </div>
             </div>
