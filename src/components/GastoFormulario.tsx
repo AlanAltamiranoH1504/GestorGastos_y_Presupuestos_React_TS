@@ -19,7 +19,7 @@ const GastoFormulario = () => {
         };
         dispatch({type: "addGasto", payload: {gasto: gastoConId}});
         dispatch({type: "showModal"});
-        toast.success("Gasto guardado correctamente");
+        toast.success("Gasto guardado correctamente.");
     }
 
     return (

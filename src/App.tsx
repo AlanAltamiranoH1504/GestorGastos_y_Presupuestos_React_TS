@@ -3,6 +3,7 @@ import {useBudget} from "./hooks/useBudget.ts";
 import {Fragment} from "react";
 import BudgetTracker from "./components/BudgetTracker.tsx";
 import GastoModal from "./components/GastoModal.tsx";
+import GastoDetalles from "./components/GastoDetalles.tsx";
 
 function App() {
     const {state} = useBudget();
@@ -27,6 +28,17 @@ function App() {
             {/*Ventana modal de gastos*/}
             {state.budget ? (
                 <main className="max-w-3xl mx-auto py-10">
+                    {state.gastos.length > 0 ? (
+                        state.gastos.map((gasto) => {
+                            return (
+                                <GastoDetalles gasto={gasto} key={gasto.id}/>
+                            )
+                        })
+                    ):(
+                        <Fragment>
+                            <div className="bg-orange-600 text-center font-bold uppercase text-white rounded-lg p-2">No tienes gastos registrados.</div>
+                        </Fragment>
+                    )}
                     <GastoModal/>
                 </main>
             ):(
