@@ -1,4 +1,4 @@
-import {Fragment} from "react";
+import {Fragment, useEffect} from "react";
 import {useForm} from "react-hook-form";
 import "react-calendar/dist/Calendar.css";
 import "react-date-picker/dist/DatePicker.css";
@@ -9,27 +9,51 @@ import {useBudget} from "../hooks/useBudget.ts";
 import {toast} from "react-toastify";
 
 const GastoFormulario = () => {
-    const {dispatch} = useBudget();
-    const {register, handleSubmit, formState: {errors}} = useForm<GastoTemporal>();
+    const {state, dispatch} = useBudget();
+    const {register, handleSubmit, setValue, formState: {errors}} = useForm<GastoTemporal>();
 
+    //Agregar o actualizar gasto
     const guardadoGasto = (data: GastoTemporal) => {
-        const gastoConId:GastoStorage = {
-            ...data,
-            id: uuidv4()
-        };
-        dispatch({type: "addGasto", payload: {gasto: gastoConId}});
-        dispatch({type: "showModal"});
-        toast.success("Gasto guardado correctamente.");
+        if (state.editingId) {
+            const gastoActualizado: GastoStorage = {
+                id: state.editingId,
+                nombre: data.nombre,
+                monto: data.monto,
+                categoria: data.categoria,
+                fecha: data.fecha
+            };
+            dispatch({type: "updateGasto", payload: {gasto: gastoActualizado}});
+            dispatch({type: "showModal"});
+            toast.success("Gasto actualizado correctamente");
+        } else {
+            const gastoConId: GastoStorage = {
+                ...data,
+                id: uuidv4()
+            };
+            dispatch({type: "addGasto", payload: {gasto: gastoConId}});
+            dispatch({type: "showModal"});
+            toast.success("Gasto guardado correctamente.");
+        }
     }
-
+    useEffect(() => {
+        if (state.editingId) {
+            const gasto: GastoStorage = state.gastos.filter((gasto) => {
+                return gasto.id === state.editingId
+            })[0];
+            setValue("nombre", gasto.nombre);
+            setValue("monto", gasto.monto);
+            setValue("fecha", gasto.fecha);
+            setValue("categoria", gasto.categoria)
+        }
+    }, [state.editingId]);
     return (
         <Fragment>
             <form
                 className="space-y-5"
                 onSubmit={handleSubmit(guardadoGasto)}
             >
-                <legend className="uppercase text-center text-2xl font-black border-b-4 py-2 border-blue-500">Nuevo
-                    Gasto
+                <legend className="uppercase text-center text-2xl font-black border-b-4 py-2 border-blue-500">
+                    {state.editingId === "" ? "Nuevo Gasto" : "Editar Gasto"}
                 </legend>
 
                 {/*Titulo del gasto*/}
@@ -113,7 +137,7 @@ const GastoFormulario = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <input type="submit" value="Guardar Gasto"
+                    <input type="submit" value={state.editingId === "" ? "Nuevo Gasto" : "Editar Gasto"}
                            className="border p-2 rounded-lg font-bold uppercase bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"/>
                 </div>
             </form>

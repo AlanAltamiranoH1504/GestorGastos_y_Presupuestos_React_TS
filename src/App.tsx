@@ -1,12 +1,17 @@
 import BudgetForm from "./components/BudgetForm.tsx";
 import {useBudget} from "./hooks/useBudget.ts";
-import {Fragment} from "react";
+import {Fragment, useEffect} from "react";
 import BudgetTracker from "./components/BudgetTracker.tsx";
 import GastoModal from "./components/GastoModal.tsx";
 import GastoDetalles from "./components/GastoDetalles.tsx";
 
 function App() {
     const {state} = useBudget();
+
+    useEffect(() => {
+        localStorage.setItem("budget", state.budget.toString());
+        localStorage.setItem("gastos", JSON.stringify(state.gastos));
+    },[state])
     return (
         <>
             <header className="bg-blue-600 py-8 max-h-72">
