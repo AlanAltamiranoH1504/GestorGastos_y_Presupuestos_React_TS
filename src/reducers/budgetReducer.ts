@@ -1,4 +1,4 @@
-import type {GastoStorage, GastoTemporal} from "../types";
+import type {Categoria, GastoStorage} from "../types";
 
 export type BudgetActions =
     { type: "addBugget", payload: { budget: number } } |
@@ -7,6 +7,7 @@ export type BudgetActions =
     { type: "removeGasto", payload: { gasto: GastoStorage } } |
     { type: "findGastoById", payload: { id: GastoStorage["id"] } } |
     { type: "updateGasto", payload: { gasto: GastoStorage } } |
+    { type: "addFilter", payload: { categoryId: Categoria["id"] } } |
     { type: "resetBudget" }
 
 export type BudgetState = {
@@ -14,6 +15,7 @@ export type BudgetState = {
     modal: boolean
     gastos: GastoStorage[]
     editingId: GastoStorage["id"]
+    filter: Categoria["id"]
 }
 
 const initialBudget = () => {
@@ -30,7 +32,8 @@ export const initialState: BudgetState = {
     budget: initialBudget(),
     modal: false,
     gastos: localStorageGastos(),
-    editingId: ""
+    editingId: "",
+    filter: ""
 }
 
 export const budgetReducer = (
@@ -91,9 +94,21 @@ export const budgetReducer = (
         }
     }
 
+    //Filtrado
+    if (actions.type === "addFilter") {
+        return {
+            ...state,
+            filter: actions.payload.categoryId
+        }
+    }
+
     //Reinicio de presupuesto
     if (actions.type === "resetBudget") {
-        return state.budget = 0
+        return {
+            budget: 0,
+            gastos: [],
+            editingId: ""
+        }
     }
     return state;
 }

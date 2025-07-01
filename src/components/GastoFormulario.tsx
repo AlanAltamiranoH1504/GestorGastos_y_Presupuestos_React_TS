@@ -14,25 +14,32 @@ const GastoFormulario = () => {
 
     //Agregar o actualizar gasto
     const guardadoGasto = (data: GastoTemporal) => {
-        if (state.editingId) {
-            const gastoActualizado: GastoStorage = {
-                id: state.editingId,
-                nombre: data.nombre,
-                monto: data.monto,
-                categoria: data.categoria,
-                fecha: data.fecha
-            };
-            dispatch({type: "updateGasto", payload: {gasto: gastoActualizado}});
-            dispatch({type: "showModal"});
-            toast.success("Gasto actualizado correctamente");
+        const totalGastado = state.gastos.reduce((acum, gasto) => {
+            return acum = acum + gasto.monto;
+        }, 0);
+        if (state.budget < totalGastado || state.budget < (totalGastado + data.monto)) {
+            toast.warning("El presupuesto llego a su limite.");
         } else {
-            const gastoConId: GastoStorage = {
-                ...data,
-                id: uuidv4()
-            };
-            dispatch({type: "addGasto", payload: {gasto: gastoConId}});
-            dispatch({type: "showModal"});
-            toast.success("Gasto guardado correctamente.");
+            if (state.editingId) {
+                const gastoActualizado: GastoStorage = {
+                    id: state.editingId,
+                    nombre: data.nombre,
+                    monto: data.monto,
+                    categoria: data.categoria,
+                    fecha: data.fecha
+                };
+                dispatch({type: "updateGasto", payload: {gasto: gastoActualizado}});
+                dispatch({type: "showModal"});
+                toast.success("Gasto actualizado correctamente");
+            } else {
+                const gastoConId: GastoStorage = {
+                    ...data,
+                    id: uuidv4()
+                };
+                dispatch({type: "addGasto", payload: {gasto: gastoConId}});
+                dispatch({type: "showModal"});
+                toast.success("Gasto guardado correctamente.");
+            }
         }
     }
     useEffect(() => {
